@@ -21,3 +21,10 @@ jobs:
           REMOTE_USER: ${{secrets.REMOTE_USER}}
           TARGET: "/home/ubuntu/bot"
           EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
+  run:
+    name: Run the bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into EC2
+        run: |
+          docker-compose up -d
