@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, NewsChannel } = require("discord.js");
 
 const embed = require(`${__dirname}/../../embeds/embeds`);
 const { button } = require(`${__dirname}/../../utils/constants`);
@@ -44,6 +44,7 @@ const registerPlayerEvents = (player, client) => {
   });
 
   player.events.on("playerStart", async (queue, track) => {
+
     const playing = queue.node.isPaused();
 
     const playPauseButton = new ButtonBuilder()
@@ -89,23 +90,28 @@ const registerPlayerEvents = (player, client) => {
   });
 
   player.events.on("audioTrackAdd", async (queue, track) => {
+
     if (queue.isPlaying()) {
       const { author } = track;
       const timestamp = queue.node.getTimestamp();
       const trackDuration =
         timestamp.progress == "Forever" ? "Endless (Live)" : track.duration;
-      await queue.metadata.channel.send({
-        embeds: [
-          embed.Embed_add(
-            "Added",
-            track.title,
-            track.url,
-            track.thumbnail,
-            author,
-            trackDuration
-          ),
-        ],
-      });
+
+      if (!track.author == "Plucks 😎") {
+        await queue.metadata.channel.send({
+          embeds: [
+            embed.Embed_add(
+              "Added",
+              track.title,
+              track.url,
+              track.thumbnail,
+              author,
+              trackDuration
+            ),
+          ],
+        });
+      }
+
 
       try {
         await queue.dashboard.delete();

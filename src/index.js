@@ -1,12 +1,15 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 const {
-  Client, GatewayIntentBits, Partials, Collection,
-} = require('discord.js');
-const { Player } = require('discord-player');
-const express = require('express');
-require('console-stamp')(console, { format: ':date(yyyy/mm/dd HH:MM:ss)' });
+  Client,
+  GatewayIntentBits,
+  Partials,
+  Collection,
+} = require("discord.js");
+const { Player } = require("discord-player");
+const express = require("express");
+require("console-stamp")(console, { format: ":date(yyyy/mm/dd HH:MM:ss)" });
 
 const registerPlayerEvents = require(`${__dirname}/events/discord-player/player`);
 const cst = require(`${__dirname}/utils/constants`);
@@ -23,7 +26,7 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates,
   ],
   partials: [Partials.Channel],
-  disableMentions: 'everyone',
+  disableMentions: "everyone",
 });
 
 client.config = cst.config;
@@ -35,63 +38,67 @@ client.player = new Player(client, {
 
 const { player } = client;
 
-const setEnvironment = () => new Promise((resolve, reject) => {
-  client.config.name = typeof (ENV.BOT_NAME) === 'undefined'
-    ? client.config.name
-    : ENV.BOT_NAME;
+const setEnvironment = () =>
+  new Promise((resolve, reject) => {
+    client.config.name =
+      typeof ENV.BOT_NAME === "undefined" ? client.config.name : ENV.BOT_NAME;
 
-  client.config.prefix = typeof (ENV.PREFIX) === 'undefined'
-    ? client.config.prefix
-    : ENV.PREFIX;
+    client.config.prefix =
+      typeof ENV.PREFIX === "undefined" ? client.config.prefix : ENV.PREFIX;
 
-  client.config.playing = typeof (ENV.PLAYING) === 'undefined'
-    ? client.config.playing
-    : ENV.PLAYING;
+    client.config.playing =
+      typeof ENV.PLAYING === "undefined" ? client.config.playing : ENV.PLAYING;
 
-  client.config.defaultVolume = typeof (ENV.DEFAULT_VOLUME) === 'undefined'
-    ? client.config.defaultVolume
-    : Number(ENV.DEFAULT_VOLUME);
+    client.config.defaultVolume =
+      typeof ENV.DEFAULT_VOLUME === "undefined"
+        ? client.config.defaultVolume
+        : Number(ENV.DEFAULT_VOLUME);
 
-  client.config.maxVolume = typeof (ENV.MAX_VOLUME) === 'undefined'
-    ? client.config.maxVolume
-    : Number(ENV.MAX_VOLUME);
+    client.config.maxVolume =
+      typeof ENV.MAX_VOLUME === "undefined"
+        ? client.config.maxVolume
+        : Number(ENV.MAX_VOLUME);
 
-  client.config.autoLeave = typeof (ENV.AUTO_LEAVE) === 'undefined'
-    ? client.config.autoLeave
-    : (String(ENV.AUTO_LEAVE) === 'true');
+    client.config.autoLeave =
+      typeof ENV.AUTO_LEAVE === "undefined"
+        ? client.config.autoLeave
+        : String(ENV.AUTO_LEAVE) === "true";
 
-  client.config.autoLeaveCooldown = typeof (ENV.AUTO_LEAVE_COOLDOWN) === 'undefined'
-    ? client.config.autoLeaveCooldown
-    : Number(ENV.AUTO_LEAVE_COOLDOWN);
+    client.config.autoLeaveCooldown =
+      typeof ENV.AUTO_LEAVE_COOLDOWN === "undefined"
+        ? client.config.autoLeaveCooldown
+        : Number(ENV.AUTO_LEAVE_COOLDOWN);
 
-  client.config.displayVoiceState = typeof (ENV.DISPLAY_VOICE_STATE) === 'undefined'
-    ? client.config.displayVoiceState
-    : (String(ENV.DISPLAY_VOICE_STATE) === 'true');
+    client.config.displayVoiceState =
+      typeof ENV.DISPLAY_VOICE_STATE === "undefined"
+        ? client.config.displayVoiceState
+        : String(ENV.DISPLAY_VOICE_STATE) === "true";
 
-  client.config.port = typeof (ENV.PORT) === 'undefined'
-    ? client.config.port
-    : Number(ENV.PORT);
+    client.config.port =
+      typeof ENV.PORT === "undefined" ? client.config.port : Number(ENV.PORT);
 
-  client.config.textQuery = typeof (ENV.TEXT_QUERY_TYPE) === 'undefined'
-    ? client.config.textQuery
-    : ENV.TEXT_QUERY_TYPE;
+    client.config.textQuery =
+      typeof ENV.TEXT_QUERY_TYPE === "undefined"
+        ? client.config.textQuery
+        : ENV.TEXT_QUERY_TYPE;
 
-  client.config.urlQuery = typeof (ENV.URL_QUERY_TYPE) === 'undefined'
-    ? client.config.urlQuery
-    : ENV.URL_QUERY_TYPE;
+    client.config.urlQuery =
+      typeof ENV.URL_QUERY_TYPE === "undefined"
+        ? client.config.urlQuery
+        : ENV.URL_QUERY_TYPE;
 
-  // console.log('setEnvironment: ', client.config);
-  resolve();
-});
+    // console.log('setEnvironment: ', client.config);
+    resolve();
+  });
 
 const loadFramework = () => {
-  console.log('-> loading Web Framework ......');
+  console.log("-> loading Web Framework ......");
   return new Promise((resolve, reject) => {
     const app = express();
     const port = client.config.port || 33333;
 
-    app.get('/', (req, res) => {
-      res.send('200 ok.');
+    app.get("/", (req, res) => {
+      res.send("200 ok.");
     });
 
     app.listen(port, () => {
@@ -102,59 +109,71 @@ const loadFramework = () => {
 };
 
 const loadEvents = () => {
-  console.log('-> loading Events ......');
+  console.log("-> loading Events ......");
   return new Promise((resolve, reject) => {
-    const files = fs.readdirSync(`${__dirname}/events/`).filter((file) => file.endsWith('.js'));
+    const files = fs
+      .readdirSync(`${__dirname}/events/`)
+      .filter((file) => file.endsWith(".js"));
 
-    console.log('+--------------------------------+');
+    console.log("+--------------------------------+");
     for (const file of files) {
       try {
         const event = require(`${__dirname}/events/${file}`);
-        console.log(`| Loaded event ${file.split('.')[0].padEnd(17, ' ')} |`);
+        console.log(`| Loaded event ${file.split(".")[0].padEnd(17, " ")} |`);
 
-        client.on(file.split('.')[0], event.bind(null, client));
+        client.on(file.split(".")[0], event.bind(null, client));
         delete require.cache[require.resolve(`${__dirname}/events/${file}`)];
       } catch (error) {
         reject(error);
       }
     }
-    console.log('+--------------------------------+');
-    console.log(`${cst.color.grey}-- loading Events finished --${cst.color.white}`);
+    console.log("+--------------------------------+");
+    console.log(
+      `${cst.color.grey}-- loading Events finished --${cst.color.white}`
+    );
     resolve();
   });
 };
 
-const loadPlayer = () => new Promise(async (resolve, reject) => {
-  try {
-    await player.extractors.loadDefault();
-    registerPlayerEvents(player, client);
-  } catch (error) {
-    reject(error);
-  }
-  console.log('-> loading Player Events finished');
-  resolve();
-});
+const loadPlayer = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      await player.extractors.loadDefault();
+      registerPlayerEvents(player, client);
+    } catch (error) {
+      reject(error);
+    }
+    console.log("-> loading Player Events finished");
+    resolve();
+  });
 
 const loadCommands = () => {
-  console.log('-> loading Commands ......');
+  console.log("-> loading Commands ......");
   return new Promise((resolve, reject) => {
-    const files = fs.readdirSync(`${__dirname}/commands/`).filter((file) => file.endsWith('.js'));
+    const files = fs
+      .readdirSync(`${__dirname}/commands/`)
+      .filter((file) => file.endsWith(".js"));
 
-    console.log('+---------------------------+');
+    console.log("+---------------------------+");
     for (const file of files) {
       try {
         const command = require(`${__dirname}/commands/${file}`);
 
-        console.log(`| Loaded Command ${command.name.toLowerCase().padEnd(10, ' ')} |`);
+        console.log(
+          `| Loaded Command ${command.name.toLowerCase().padEnd(10, " ")} |`
+        );
 
         client.commands.set(command.name.toLowerCase(), command);
+        // client.remove_command("ban");
         delete require.cache[require.resolve(`${__dirname}/commands/${file}`)];
       } catch (error) {
         reject(error);
       }
     }
-    console.log('+---------------------------+');
-    console.log(`${cst.color.grey}-- loading Commands finished --${cst.color.white}`);
+    console.log("+---------------------------+");
+    console.log(
+      `${cst.color.grey}-- loading Commands finished --${cst.color.white}`
+    );
     resolve();
   });
 };
@@ -166,10 +185,12 @@ Promise.resolve()
   .then(() => loadPlayer())
   .then(() => loadCommands())
   .then(() => {
-    console.log(`${cst.color.green}*** All loaded successfully ***${cst.color.white}`);
+    console.log(
+      `${cst.color.green}*** All loaded successfully ***${cst.color.white}`
+    );
     client.login(ENV.TOKEN);
   });
 
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled promise rejection:', error);
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled promise rejection:", error);
 });

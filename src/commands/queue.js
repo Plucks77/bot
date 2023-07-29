@@ -13,7 +13,7 @@ module.exports = {
 
     if (!queue || !queue.currentTrack) return message.reply({ content: '❌ | There is no music currently playing.', allowedMentions: { repliedUser: false } });
 
-    const tracks = queue.tracks.map((track, index) => `${++index}. ${track.title}`);
+    const tracks = queue.tracks.filter(t => t.title != "Me mama").map((track, index) => `${++index}. ${track.title}`);
 
     const nowplaying = `Now Playing : ${queue.currentTrack.title}\n\n`;
     let tracksQueue = '';
@@ -35,8 +35,8 @@ module.exports = {
     const queue = client.player.nodes.get(interaction.guild.id);
 
     if (!queue || !queue.currentTrack) return interaction.reply({ content: '❌ | There is no music currently playing.', allowedMentions: { repliedUser: false } });
-
-    const tracks = queue.tracks.map((track, index) => `${++index}. ${track.title}`);
+  
+    const tracks = queue.tracks.filter(t => t.title != "Me mama").map((track, index) => `${++index}. ${track.title}`);
 
     const nowplaying = `Now Playing : ${queue.currentTrack.title}\n\n`;
     let tracksQueue = '';

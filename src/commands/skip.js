@@ -1,3 +1,8 @@
+const {
+  blockedUsers,
+  meMama,
+} = require(`${__dirname}/../utils/constants`);
+
 module.exports = {
   name: 'skip',
   aliases: ['s'],
@@ -10,7 +15,7 @@ module.exports = {
     const queue = client.player.nodes.get(message.guild.id);
     const { username } = message.author;
 
-    if (username === 'oRabellenda') return interaction.reply('❌ | Suga a minha bola haha 😁');
+    if (blockedUsers.includes(username)) return message.reply(meMama);
 
     if (!queue || !queue.isPlaying()) {
       return message.reply({
@@ -35,7 +40,10 @@ module.exports = {
     const queue = client.player.nodes.get(interaction.guild.id);
     const { username } = interaction.user;
 
-    if (username === 'oRabellenda') return interaction.reply('❌ | Suga a minha bola haha 😁');
+    if (!blockedUsers.includes(username)) return interaction.reply({
+      content: meMama,
+      allowedMentions: { repliedUser: false },
+    });
 
     if (!queue || !queue.isPlaying()) {
       return interaction.reply({

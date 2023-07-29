@@ -8,6 +8,11 @@ const ffmpeg = require("@ffmpeg-installer/ffmpeg");
 process.env.FFMPEG_PATH = ffmpeg.path;
 process.env.DP_NO_FFMPEG_WARN = true; // Mute ffmpeg warning
 
+const RABELAO = "oRaBellenda";
+const gemidos = ["https://www.youtube.com/watch?v=zV5inlgqxMo", "https://youtu.be/r6HEBsr2NQQ"];
+const randomGemido = gemidos[Math.floor(Math.random() * gemidos.length)];
+const rickRollUrl = "https://youtu.be/dQw4w9WgXcQ";
+const imageUrl = "https://cdn.discordapp.com/attachments/1109879223658749974/1134950535515095050/Screenshot_2023-07-29_at_17.47.42.png";
 /**
  * Constants variables
  */
@@ -47,10 +52,9 @@ const cst = {
     green: "\x1B[32m",
     cyan: "\x1B[36m",
   },
-  RABELAO: "oRaBellenda",
-  verifyBeforePlay: ["Plucks", this.RABELAO],
-  allowedToBanSongs: ["Pluckss"],
-  blockedUsers: ["Pluckss", this.RABELAO],
+  verifyBeforePlay: ["plucks78", RABELAO],
+  allowedToBanSongs: ["plucks78"],
+  blockedUsers: ["plucks77", RABELAO],
   blockedCommands: [
     "skip",
     "leave",
@@ -61,6 +65,20 @@ const cst = {
     "Playing-Stop",
   ],
   meMama: "❌ | Me mama hahaha 😁",
+  rickRoll: {
+    requestedBy: 'Plucks 😎',
+    queryType: 'youtubeSearch',
+    raw: null,
+    extractor: null,
+    id: '1130457187483652131',
+    title: "Me mama",
+    author: 'Plucks 😎',
+    url: randomGemido,
+    thumbnail: imageUrl,
+    duration: '69:420',
+    views: 46999513,
+    playlist: undefined
+  }
 };
 
 module.exports = cst;

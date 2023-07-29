@@ -26,14 +26,15 @@ module.exports = async (client) => {
     djs: `Discord.js: ${color.cyan}${client.status.discord_version}${color.white}`,
   };
 
-  //   db.serialize(() => {
-  //     db.run("DROP TABLE ban");
-  //   });
+  db.serialize(() => {
+    const query =
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='ban'";
 
-  //   console.log("CREATRE TABLE??");
-  //   db.serialize(() => {
-  //     db.run("CREATE TABLE ban (link TEXT)");
-  //   });
+    db.all(query, [], (err, rows) => {
+      if (rows.length == 0)
+        db.run("CREATE TABLE ban (link TEXT, username TEXT)");
+    });
+  });
 
   db.close();
 

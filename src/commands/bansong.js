@@ -42,8 +42,8 @@ module.exports = {
     const link = interaction.options.getString("link");
     console.log("str", link);
 
-    const stmt = db.prepare("INSERT INTO ban VALUES (?)");
-    stmt.run(link);
+    const stmt = db.prepare("INSERT INTO ban VALUES (?, ?)");
+    stmt.run(link, username);
 
     stmt.finalize();
 

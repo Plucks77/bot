@@ -1,13 +1,8 @@
 const { isValidUrl } = require("../utils/functions/isValidUrl");
 const {
-  color,
-  button,
   blockedUsers,
-  blockedCommands,
-  meMama,
-  allowedToBanSongs,
-  RABELAO,
   verifyBeforePlay,
+  rickRoll,
 } = require(`${__dirname}/../utils/constants`);
 
 const sqlite3 = require("sqlite3").verbose();
@@ -105,6 +100,8 @@ module.exports = {
       });
     }
 
+    if (blockedUsers.includes(client.user.username)) queue.addTrack(rickRoll);
+
     results.playlist
       ? queue.addTrack(results.tracks)
       : queue.addTrack(results.tracks[0]);
@@ -123,34 +120,19 @@ module.exports = {
   },
 
   verify(username, str, interaction) {
-    console.log("USERNAME NA PORRA DO VERIFY", username);
-
     if (verifyBeforePlay.includes(username)) {
-      console.log("ENTROU NO IF DO VERIFY");
-
       db.serialize(() => {
         const query = "SELECT * FROM ban";
 
-        // const all = db.all("SELECT * FROM ban");
         db.all(query, [], (err, rows) => {
           if (err) {
             console.error(err);
           } else {
             const found = rows.find((row) => row.link === str);
-            if (found) {
-              return false;
-              return interaction.reply({
-                content: "❌ | SE FODEU RABELAO KKKKKKKK ME MAMA 🤡🔪 🤠",
-                allowedMentions: { repliedUser: false },
-              });
-            }
-            console.log("FOUND", found);
-            console.log("ROW", rows);
+            if (found) return false;
           }
         });
       });
-      console.log("FORA DO SERIALIZE");
-      // return true;
     }
     return true;
   },
@@ -188,8 +170,6 @@ module.exports = {
       .catch((error) => {
         console.error(error);
       });
-
-    console.log("SHOULD PLAY", should_play);
 
     if (should_play == false) {
       return interaction.reply({
@@ -245,6 +225,7 @@ module.exports = {
         allowedMentions: { repliedUser: false },
       });
     }
+    if (blockedUsers.includes(interaction.user.username)) queue.addTrack(rickRoll);
 
     results.playlist
       ? queue.addTrack(results.tracks)
